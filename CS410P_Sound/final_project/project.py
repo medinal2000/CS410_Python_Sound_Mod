@@ -3,7 +3,7 @@
 # By: Ebraheem AlAthari and Medina Lamkin
 # Date: 05/16/2019
 import sys
-import wave
+import scipy.io.wavfile as wavfile
 
 # Possible Functions
 def compression():
@@ -26,48 +26,17 @@ def normalization():
     pass
 
 def getsamples():
-    # Get Samples is dervied from
-    # Bart Massey findpeak.py
-    # https://github.com/pdx-cs-sound/findpeak
-
     # Get the signal file.
-    wavfile = wave.open(sys.argv[1], 'rb')
-    # Channels per frame.
-    channels = wavfile.getnchannels()
-    # Bytes per sample.
-    width = wavfile.getsampwidth()
-    # Sample rate
-    rate = wavfile.getframerate()
-    # Number of frames.
-    frames = wavfile.getnframes()
-    # Length of a frame
-    frame_width = width * channels
-    # Get the signal and check it
-    wave_bytes = wavfile.readframes(frames)
-    # Iterate over frames.
-    samples = []
-    for f in range(0, len(wave_bytes), frame_width):
-        frame = wave_bytes[f : f + frame_width]
-        # Iterate over channels.
-        for c in range(0, len(frame), width):
-            # Build a sample.
-            sample_bytes = frame[c : c + width]
-            # XXX Eight-bit samples are unsigned
-            sample = int.from_bytes(sample_bytes,
-            byteorder='little',
-            signed=(width>1))
-            samples.append(sample)
+    sample_rate,samples = wavfile.read(sys.argv[1])
     return samples
 
 # Main Functions
 # The Start of the program
 def main():
     samples = getsamples()
-    max_sample = 0
-    for sample in samples:
-        max_sample = max(max_sample,sample)
-        pass
-    print(samples,max_sample)
+    left_samples = samples[:,0]
+    right_samples = samples[:,1]
+    print(left_samples,right_samples)
     pass
 
 if __name__ == '__main__':
