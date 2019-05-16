@@ -63,7 +63,11 @@ def getsamples():
 # The Start of the program
 def main():
     samples = getsamples()
-    print(samples)
+    max_sample = 0
+    for sample in samples:
+        max_sample = max(max_sample,sample)
+        pass
+    print(samples,max_sample)
     pass
 
 if __name__ == '__main__':
