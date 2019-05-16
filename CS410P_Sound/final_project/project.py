@@ -4,6 +4,7 @@
 # Date: 05/16/2019
 import sys
 import scipy.io.wavfile as wavfile
+import numpy
 
 # Possible Functions
 def compression():
@@ -22,21 +23,46 @@ def echo():
 def reverb():
     pass
 
-def normalization():
-    pass
+def normalization(samples):
+    multiplyer = (2**15)-1
+    scale_increase = float(multiplyer)/getmax(samples)
+    left_samples = samples[:,0]
+    right_samples = samples[:,1]
+    print(left_samples,right_samples)
+    left_samples = scale_increase * left_samples
+    right_samples = scale_increase * right_samples
+    left_samples = numpy.floor(left_samples)
+    right_samples = numpy.floor(right_samples)
+    left_samples = numpy.array(left_samples).astype(int)
+    right_samples = numpy.array(right_samples).astype(int)
+
+    samples =  numpy.column_stack((left_samples,right_samples))
+    return samples
+
+def getmax(samples):
+    left_samples = samples[:,0]
+    left_max = max(left_samples)
+    right_samples = samples[:,1]
+    right_max = max(right_samples)
+    max_sample = 0
+    if left_max > right_max:
+        max_sample = left_max
+        pass
+    else:
+        max_sample = right_max
+    return max_sample
 
 def getsamples():
     # Get the signal file.
     sample_rate,samples = wavfile.read(sys.argv[1])
-    return samples
+    return sample_rate,samples
 
 # Main Functions
 # The Start of the program
 def main():
-    samples = getsamples()
-    left_samples = samples[:,0]
-    right_samples = samples[:,1]
-    print(left_samples,right_samples)
+    sample_rate,samples = getsamples()
+    samples = normalization(samples)
+    print(samples)
     pass
 
 if __name__ == '__main__':
