@@ -28,13 +28,12 @@ def normalization(samples):
     scale_increase = float(multiplyer)/getmax(samples)
     left_samples = samples[:,0]
     right_samples = samples[:,1]
-    print(left_samples,right_samples)
     left_samples = scale_increase * left_samples
     right_samples = scale_increase * right_samples
     left_samples = numpy.floor(left_samples)
     right_samples = numpy.floor(right_samples)
-    left_samples = numpy.array(left_samples).astype(int)
-    right_samples = numpy.array(right_samples).astype(int)
+    left_samples = numpy.array(left_samples).astype('int16')
+    right_samples = numpy.array(right_samples).astype('int16')
 
     samples =  numpy.column_stack((left_samples,right_samples))
     return samples
@@ -62,7 +61,7 @@ def getsamples():
 def main():
     sample_rate,samples = getsamples()
     samples = normalization(samples)
-    print(samples)
+    wavfile.write('./test.wav',sample_rate,samples)
     pass
 
 if __name__ == '__main__':
