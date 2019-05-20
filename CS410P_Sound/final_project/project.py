@@ -5,6 +5,7 @@
 import sys
 import scipy.io.wavfile as wavfile
 import numpy
+import audioop
 
 # Possible Functions
 def compression():
@@ -38,6 +39,24 @@ def normalization(samples):
     samples =  numpy.column_stack((left_samples,right_samples))
     return samples
 
+#might use as a function called by reverb or may rename it as 
+#reverb later; could potentially be used for echo too
+def audio_delay(samples, sample_rate, offset):
+    sample_width = samples.itemsize
+    num_bytes_offset = sample_width * offset * int(sample_rate/1000)
+    beginning = numpy.zeros(offset, dtype='int16')
+
+    left_samples = samples[:,0]
+    right_samples = samples[:,1]
+    left_end = samples[:-offset,0]
+    right_end = samples[:-offset,1]
+    left_delay = numpy.append(beginning, left_end)
+    right_delay = numpy.append(beginning, right_end)
+
+    left_samples = left_samples + left_delay
+    right_samples = right_samples + right_delay
+    return numpy.column_stack((left_samples, right_samples))
+
 def getmax(samples):
     left_samples = samples[:,0]
     left_max = max(left_samples)
@@ -61,6 +80,8 @@ def getsamples():
 def main():
     sample_rate,samples = getsamples()
     samples = normalization(samples)
+    samples = audio_delay(samples, sample_rate, 1000)
+
     wavfile.write('./test.wav',sample_rate,samples)
     pass
 
