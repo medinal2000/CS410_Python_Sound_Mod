@@ -24,8 +24,8 @@ def reverb():
     pass
 
 def normalization(samples):
-    multiplyer = (2**15)-1
-    scale_increase = float(multiplyer)/getmax(samples)
+    multiplyer = numpy.iinfo(numpy.int16).max
+    scale_increase = multiplyer/getmax(samples)
     left_samples = samples[:,0]
     right_samples = samples[:,1]
     left_samples = scale_increase * left_samples
