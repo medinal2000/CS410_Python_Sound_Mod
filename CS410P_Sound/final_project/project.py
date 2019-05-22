@@ -3,26 +3,26 @@
 # By: Ebraheem AlAthari and Medina Lamkin
 # Date: 05/16/2019
 import sys
-import scipy.io.wavfile as wavfile
-import numpy
+import os
 from effects import Effects
 
+# Checks if file exists and if not stops the program
+def validate_file(filename):
+    exists = os.path.isfile(filename)
+    if not exists:
+        print('File: ' + filename + ' can\'t be found')
+        sys.exit(1)
 
-def getsamples():
-    # Get the signal file.
-    sample_rate,samples = wavfile.read(sys.argv[1])
-    return sample_rate,samples
-
-# Main Functions
+# Main Function
 # The Start of the program
-def main():
-    effects = Effects()
-    sample_rate,samples = getsamples()
-    samples = effects.normalization(samples)
-    samples = effects.audio_delay(samples, sample_rate, 3000)
-
-    wavfile.write('./test.wav',sample_rate,samples)
-    pass
+# Adds Effects to the file
+def main(filename):
+    validate_file(filename)
+    alter_wav_file = Effects(filename)
+    alter_wav_file.audio_delay(3000)
+    alter_wav_file.normalization()
+    alter_wav_file.export()
 
 if __name__ == '__main__':
-    main()
+    filename = sys.argv[1]
+    main(filename)
