@@ -18,8 +18,12 @@ def getsamples():
 def main():
     effects = Effects()
     sample_rate,samples = getsamples()
-    samples = effects.normalization(samples)
+
+    # give the user some options of various effects they can apply 
+    # to their input audio file, including our recommendation
+
     samples = effects.audio_delay(samples, sample_rate, 3000)
+    samples = effects.normalization(samples)
 
     wavfile.write('./test.wav',sample_rate,samples)
     pass
