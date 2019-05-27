@@ -1,9 +1,69 @@
+# Final Project for CS410P
+# By: Ebraheem AlAthari and Medina Lamkin
+# Date: 05/21/2019
+import sys
 import numpy
+import scipy.io.wavfile as wavfile
+import time
 
 class Effects:
-    def __init__(self):
+    # Creates four variables sample_rate,left,right,and name
+    # left and right are the audio channels
+    # name stores the filename for later use
+    def __init__(self,filename):
+        sample_rate,samples = wavfile.read(filename)
+        if len(samples.shape) != 2 or samples.shape[1] != 2:
+            print('Stereo Files Only Supported')
+            sys.exit(1)
+        self.sample_rate = sample_rate
+        self.left = samples[:,0]
+        self.right = samples[:,1]
+        self.original_left = samples[:,0]
+        self.original_right = samples[:,1]
+        name = filename.split('.')
+        self.name = name[0]
+
+    # Exports a wav file based on the altered left and right channels
+    # Example $(filename)-Output-$(date and time)
+    # Appends current date and time to new file
+    def export(self):
+        localtime = time.asctime( time.localtime(time.time()) )
+        localtime = localtime.replace(' ','-')
+        localtime = localtime.replace(':','-')
+        self.name = './' + self.name + '-Output-' + localtime + '.wav'
+        samples =  numpy.column_stack((self.left,self.right))
+        wavfile.write(self.name,self.sample_rate,samples)
+        print('Saved File - New Filename: ' + self.name)
         pass
-    
+
+    def normalization(self):
+        self.left = self.normalize_channel(self.left)
+        self.right = self.normalize_channel(self.right)
+
+    def normalize_channel(self, channel):
+        multiplyer = numpy.iinfo(numpy.int16).max
+        scale_increase = multiplyer/self.getmax(channel)
+        channel = scale_increase * channel
+        channel = numpy.floor(channel)
+        channel = numpy.array(channel).astype('int16')
+        return channel
+
+    def getmax(self, channel):
+        return max(channel)
+
+    def audio_delay(self, offset):
+        self.left = self.audio_delay_channel(self.left, offset)
+        self.right = self.audio_delay_channel(self.right, offset)
+
+    def audio_delay_channel(self, channel, offset):
+        num_bytes_offset = channel.itemsize * offset * int(self.sample_rate/1000)
+        beginning = numpy.zeros(offset, dtype='int16')
+        channel_end = channel[:-offset]
+        channel_delay = numpy.append(beginning, channel_end)
+        channel = channel + channel_delay
+        return channel
+
+
     # Possible Functions
     def compression(self):
         pass
@@ -20,49 +80,3 @@ class Effects:
 
     def reverb(self):
         pass
-
-    def normalization(self, samples):
-        multiplyer = numpy.iinfo(numpy.int16).max
-        scale_increase = multiplyer/self.getmax(samples)
-        left_samples = samples[:,0]
-        right_samples = samples[:,1]
-        left_samples = scale_increase * left_samples
-        right_samples = scale_increase * right_samples
-        left_samples = numpy.floor(left_samples)
-        right_samples = numpy.floor(right_samples)
-        left_samples = numpy.array(left_samples).astype('int16')
-        right_samples = numpy.array(right_samples).astype('int16')
-
-        samples =  numpy.column_stack((left_samples,right_samples))
-        return samples
-
-    #might use as a function called by reverb or may rename it as 
-    #reverb later; could potentially be used for echo too
-    def audio_delay(self, samples, sample_rate, offset):
-        sample_width = samples.itemsize
-        num_bytes_offset = sample_width * offset * int(sample_rate/1000)
-        beginning = numpy.zeros(offset, dtype='int16')
-
-        left_samples = samples[:,0]
-        right_samples = samples[:,1]
-        left_end = samples[:-offset,0]
-        right_end = samples[:-offset,1]
-        left_delay = numpy.append(beginning, left_end)
-        right_delay = numpy.append(beginning, right_end)
-
-        left_samples = left_samples + left_delay
-        right_samples = right_samples + right_delay
-        return numpy.column_stack((left_samples, right_samples))
-
-    def getmax(self, samples):
-        left_samples = samples[:,0]
-        left_max = max(left_samples)
-        right_samples = samples[:,1]
-        right_max = max(right_samples)
-        max_sample = 0
-        if left_max > right_max:
-            max_sample = left_max
-            pass
-        else:
-            max_sample = right_max
-        return max_sample
