@@ -31,7 +31,13 @@ class CmdInterface():
         exists = os.path.isfile(filename)
         if not exists:
             print('File: ' + filename + ' can\'t be found')
-        return exists
+            return exists
+        else:
+            if filename.endswith('.wav'):
+                return True
+            else:
+                print("Your file is not a wav file, please enter the name of a wav file along with the '.wav' extension.")
+                return False
 
     def interface(self, filename):
         self.display_interface()
