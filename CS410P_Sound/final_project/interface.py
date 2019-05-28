@@ -38,13 +38,13 @@ class CmdInterface():
 
     def get_options(self):
         user_input = input()
-        chosen_options = [int(x) for x in user_input.split()]
+        chosen_options = [x for x in user_input.split()]
         return chosen_options
 
     def validate_input(self, requested_effects):
         for effect in requested_effects:
-            if(int(effect) == 1 or int(effect) == 2 or int(effect) == 3
-                or int(effect) == 4 or int(effect) == 5):
+            if(effect == '1' or effect == '2' or effect == '3'
+                or effect == '4' or effect == '5'):
                 return True
             else:
                 return False
