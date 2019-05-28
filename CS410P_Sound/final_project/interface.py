@@ -102,5 +102,9 @@ class CmdInterface():
 
     # TODO
     def should_run_again(self):
-        return False
+        answer = input("\nWould you like to change your wav file again? (Y/N)\n")
+        if (answer == 'Y' or answer == 'y' or answer.lower() == 'yes'):
+            return True
+        else:
+            return False
 
