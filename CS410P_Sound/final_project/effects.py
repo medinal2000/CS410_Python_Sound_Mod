@@ -33,7 +33,7 @@ class Effects:
         self.name = './' + self.name + '-Output-' + localtime + '.wav'
         samples =  numpy.column_stack((self.left,self.right))
         wavfile.write(self.name,self.sample_rate,samples)
-        print('Saved File - New Filename: ' + self.name)
+        print('\nSaved File - New Filename: ' + self.name)
         pass
 
     def normalization(self):
