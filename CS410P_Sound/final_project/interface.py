@@ -1,3 +1,4 @@
+import os
 from effects import Effects
 
 class CmdInterface():
@@ -10,16 +11,33 @@ class CmdInterface():
                         }
         pass
 
-    def run(self, filename):
+    def run(self):
+        # get a wave file to edit
+        filename = self.get_filename()
+        while not self.validate_filename(filename):
+            filename = self.get_filename()
+        # run the program on a given wav file
         repeat = True
         while repeat:
             repeat = self.interface(filename)
+        pass
+
+    def get_filename(self):
+        filename = input("Please enter the name of a wav file you'd like to modify: ")
+        return filename
+
+    # TODO make it ensure file is wav file
+    def validate_filename(self, filename):
+        exists = os.path.isfile(filename)
+        if not exists:
+            print('File: ' + filename + ' can\'t be found')
+        return exists
 
     def interface(self, filename):
         self.display_interface()
         requested_effects = self.get_options()
         if not self.validate_input(requested_effects):
-            print("You've entered invalid inputs, try again!")
+            print("You've entered invalid inputs, try again with a number 1-5!")
             repeat = True
             return repeat
         quit = self.apply_effects(filename, requested_effects)
@@ -64,7 +82,7 @@ class CmdInterface():
             elif int(e) == 4:
                 effects.echo()
                 effects.reverb()
-                effects.normalize()
+                effects.normalization()
                 break
             elif int(e) == 5:
                 print("You have opted to exit this program...")
@@ -72,6 +90,8 @@ class CmdInterface():
                 return True
         if normalize:
             effects.normalization()
+        # save the altered version of the wave file
+        effects.export()
         return False
 
     # TODO
