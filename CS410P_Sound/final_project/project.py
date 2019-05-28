@@ -4,6 +4,7 @@
 # Date: 05/16/2019
 import sys
 import os
+from interface import CmdInterface 
 from effects import Effects
 
 # Checks if file exists and if not stops the program
@@ -22,6 +23,8 @@ def main(filename):
     alter_wav_file.audio_delay(3000)
     alter_wav_file.normalization()
     alter_wav_file.export()
+    interface = CmdInterface()
+    interface.run(filename)
 
 if __name__ == '__main__':
     filename = sys.argv[1]
