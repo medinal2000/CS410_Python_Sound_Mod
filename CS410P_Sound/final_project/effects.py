@@ -55,12 +55,12 @@ class Effects:
         self.left = self.audio_delay_channel(self.left, offset)
         self.right = self.audio_delay_channel(self.right, offset)
 
-    def audio_delay_channel(self, channel, offset):
-        num_bytes_offset = channel.itemsize * offset * int(self.sample_rate/1000)
+    # Takes in Millisecond Input
+    def audio_delay_channel(self, channel, offset_ms):
+        offset = offset_ms * int(self.sample_rate/1000)
         beginning = numpy.zeros(offset, dtype='int16')
-        channel_end = channel[:-offset]
-        channel_delay = numpy.append(beginning, channel_end)
-        channel = channel + channel_delay
+        channel_delay = numpy.append(beginning, channel)
+        channel = channel_delay
         return channel
 
 
