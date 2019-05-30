@@ -83,14 +83,17 @@ class Effects:
             print('Setting Number of Echos to 7')
             num_of_echos = MAX_ECHO
             pass
+
         for i in range(0,num_of_echos):
-            self.echos_left.insert(i,self.audio_delay_channel(self.original_left,2000*(i+1)))
-            self.echos_right.insert(i,self.audio_delay_channel(self.original_right,2000*(i+1)))
+            self.echos_left.insert(i,self.audio_delay_channel(self.original_left,1000*(i+1)))
+            self.echos_right.insert(i,self.audio_delay_channel(self.original_right,1000*(i+1)))
             pass
 
         for i in range(0,num_of_echos):
-            self.left = numpy.append(self.left,self.echos_left[i])
-            self.right = numpy.append(self.right,self.echos_right[i])
+            self.left = numpy.resize(self.left,self.echos_left[i].shape[0])
+            self.right = numpy.resize(self.right,self.echos_right[i].shape[0])
+            self.left = numpy.add(self.left,self.echos_left[i])
+            self.right = numpy.add(self.right,self.echos_right[i])
             pass
         pass
 

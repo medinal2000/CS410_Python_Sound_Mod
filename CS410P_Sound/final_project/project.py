@@ -11,7 +11,7 @@ import sys
 # Adds Effects to the file
 def main():
     if len(sys.argv) == 2 and sys.argv[1] == 'debug':
-        effect = Effects('Hello.wav')
+        effect = Effects('Hi.wav')
         effect.echo()
         effect.normalization()
         effect.export()
