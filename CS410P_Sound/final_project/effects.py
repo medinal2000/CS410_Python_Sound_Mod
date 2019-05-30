@@ -5,6 +5,8 @@ import sys
 import numpy
 import scipy.io.wavfile as wavfile
 import time
+MAX_ECHO = 7
+
 
 class Effects:
     # Creates four variables sample_rate,left,right,and name
@@ -22,6 +24,8 @@ class Effects:
         self.original_right = samples[:,1]
         name = filename.split('.')
         self.name = name[0]
+        self.echos_left = []
+        self.echos_right = []
 
     # Exports a wav file based on the altered left and right channels
     # Example $(filename)-Output-$(date and time)
@@ -30,10 +34,10 @@ class Effects:
         localtime = time.asctime( time.localtime(time.time()) )
         localtime = localtime.replace(' ','-')
         localtime = localtime.replace(':','-')
-        self.name = './' + self.name + '-Output-' + localtime + '.wav'
+        self.output_file = './' + self.name + '-Output-' + localtime + '.wav'
         samples =  numpy.column_stack((self.left,self.right))
-        wavfile.write(self.name,self.sample_rate,samples)
-        print('\nSaved File - New Filename: ' + self.name)
+        wavfile.write(self.output_file,self.sample_rate,samples)
+        print('Saved File - New Filename: ' + self.output_file)
         pass
 
     def normalization(self):
@@ -63,6 +67,33 @@ class Effects:
         channel = channel_delay
         return channel
 
+    def echo(self):
+        self.echo_function(4)
+        pass
+
+    def echo_function(self,num_of_echos):
+        global MAX_ECHO
+        if num_of_echos < 1:
+            print('Number of Echos was recvived as a negative number')
+            print('Setting Number of Echos to 4')
+            num_of_echos = 4
+            pass
+        elif num_of_echos > MAX_ECHO:
+            print('Number of Echos was recvived as a number higher then 7')
+            print('Setting Number of Echos to 7')
+            num_of_echos = MAX_ECHO
+            pass
+        for i in range(0,num_of_echos):
+            self.echos_left.insert(i,self.audio_delay_channel(self.original_left,2000*(i+1)))
+            self.echos_right.insert(i,self.audio_delay_channel(self.original_right,2000*(i+1)))
+            pass
+
+        for i in range(0,num_of_echos):
+            self.left = numpy.append(self.left,self.echos_left[i])
+            self.right = numpy.append(self.right,self.echos_right[i])
+            pass
+        pass
+
 
     # Possible Functions
     def compression(self):
@@ -75,8 +106,5 @@ class Effects:
         pass
 
     # Functions to work on
-    def echo(self):
-        pass
-
     def reverb(self):
         pass
