@@ -5,7 +5,6 @@ import sys
 import numpy
 import scipy.io.wavfile as wavfile
 import time
-MAX_ECHO = 7
 
 
 class Effects:
@@ -14,18 +13,28 @@ class Effects:
     # name stores the filename for later use
     def __init__(self,filename):
         sample_rate,samples = wavfile.read(filename)
-        if len(samples.shape) != 2 or samples.shape[1] != 2:
-            print('Stereo Files Only Supported')
-            sys.exit(1)
+        # accept stereo audio files only
+        self.check_stereo(samples)
+        #
         self.sample_rate = sample_rate
         self.left = samples[:,0]
         self.right = samples[:,1]
         self.original_left = samples[:,0]
         self.original_right = samples[:,1]
+        # constants
+        self.MAX_ECHO = 7
+        # save name of file to name output file
         name = filename.split('.')
         self.name = name[0]
+        # used for echo functions
         self.echos_left = []
         self.echos_right = []
+
+    # check that the given file is stereo; exit if not
+    def check_stereo(self, samples):
+        if len(samples.shape) != 2 or samples.shape[1] != 2:
+            print('Stereo Files Only Supported')
+            sys.exit(1)
 
     # Exports a wav file based on the altered left and right channels
     # Example $(filename)-Output-$(date and time)
@@ -67,21 +76,20 @@ class Effects:
         channel = channel_delay
         return channel
 
-    def echo(self):
-        self.echo_function(4)
+    def echo(self, num_of_echos=4):
+        self.echo_function(num_of_echos)
         pass
 
     def echo_function(self,num_of_echos):
-        global MAX_ECHO
         if num_of_echos < 1:
             print('Number of Echos was recvived as a negative number')
             print('Setting Number of Echos to 4')
             num_of_echos = 4
             pass
-        elif num_of_echos > MAX_ECHO:
+        elif num_of_echos > self.MAX_ECHO:
             print('Number of Echos was recvived as a number higher then 7')
             print('Setting Number of Echos to 7')
-            num_of_echos = MAX_ECHO
+            num_of_echos = self.MAX_ECHO
             pass
 
         for i in range(0,num_of_echos):
