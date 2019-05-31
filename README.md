@@ -2,3 +2,5 @@
 
 blah blah
 
+To talk about possible GUI
+https://wiki.python.org/moin/TkInter
