@@ -1,3 +1,6 @@
+# Final Project for CS410P
+# By: Ebraheem AlAthari and Medina Lamkin
+# Date: 05/27/2019
 import os
 from effects import Effects
 
@@ -87,7 +90,7 @@ class CmdInterface():
             else:
                 return False
 
-    # returns a boolean value indicating whether user opted to quit or not 
+    # returns a boolean value indicating whether user opted to quit or not
     def apply_effects(self, filename, requested_effects):
         effects = Effects(filename)
         # decide what the user has opted to do
@@ -115,4 +118,3 @@ class CmdInterface():
             return True
         else:
             return False
-
