@@ -3,12 +3,23 @@ from effects import Effects
 
 class CmdInterface():
     def __init__(self):
-        self.options = {'1' : 'Normalization',
-                        '2' : 'Echo',
-                        '3' : 'Reverb',
-                        '4' : 'Apply all effects',
-                        '5' : 'Exit'
+        # option values; allows for less hard coding of values
+        self.all, self.echo = '1', '2'
+        self.reverb, self.normalize = '3', '4'
+        self.quit = '5'
+        # dictionary to map each option to its desciption
+        self.options = {self.all : 'Apply all effects',
+                        self.echo : 'Echo',
+                        self.reverb : 'Reverb',
+                        self.normalize : 'Normalization',
+                        self.quit : 'Don\'t apply any effects (program will exit)'
                         }
+        self.users_choices = {self.all : False,
+                              self.echo : False,
+                              self.reverb : False,
+                              self.normalize : False
+                              }
+        print(self.users_choices)
         pass
 
     # get filename and run the program
@@ -70,8 +81,8 @@ class CmdInterface():
     # validate the file modification options user entered
     def validate_input(self, requested_effects):
         for effect in requested_effects:
-            if(effect == '1' or effect == '2' or effect == '3'
-                or effect == '4' or effect == '5'):
+            if(effect == self.all or effect == self.echo or effect == self.reverb
+                or effect == self.normalize or effect == self.quit):
                 return True
             else:
                 return False
@@ -79,26 +90,20 @@ class CmdInterface():
     # returns a boolean value indicating whether user opted to quit or not 
     def apply_effects(self, filename, requested_effects):
         effects = Effects(filename)
-        # if user wants to normalize the audio, it will be done at the very end
-        normalize = False
+        # decide what the user has opted to do
         for e in requested_effects:
-            if int(e) == 1:
-               normalize = True
-            elif int(e) == 2:
-                effects.echo()
-            elif int(e) == 3:
-                effects.reverb()
-            elif int(e) == 4:
-                effects.echo()
-                effects.reverb()
-                effects.normalization()
-                break
-            elif int(e) == 5:
-                print("You have opted to exit this program...")
-                print("Program exiting, no changes have been made")
+            # user has opted to quit program
+            if e == self.quit:
                 return True
-        if normalize:
-            effects.normalization()
+            # if not quiting, record what user wants
+            self.users_choices[e] = True
+            # if user want to apply all effects, no need to continue looping
+            if e == self.all:
+                break
+        # apply the effects
+        for option in self.users_choices.items():
+            if option[1] == True:
+                print(option, "effect will apply")
         # save the altered version of the wav file
         effects.export()
         return False
