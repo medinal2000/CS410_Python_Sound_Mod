@@ -1,6 +1,7 @@
 # Final Project for CS410P
 # By: Ebraheem AlAthari and Medina Lamkin
 # Date: 05/27/2019
+
 import os
 from effects import Effects
 
@@ -17,6 +18,8 @@ class CmdInterface():
                         self.normalize : 'Normalization',
                         self.quit : 'Don\'t apply any effects (program will exit)'
                         }
+        # dictionary to map the effects option to the truth value
+        # indicating whether the user has opted to apply the given option
         self.users_choices = {self.all : False,
                               self.echo : False,
                               self.reverb : False,
@@ -106,6 +109,7 @@ class CmdInterface():
         # apply the effects
         for option in self.users_choices.items():
             if option[1] == True:
+                effects.map_effects[option[0]]
                 print(option, "effect will apply")
         # save the altered version of the wav file
         effects.export()

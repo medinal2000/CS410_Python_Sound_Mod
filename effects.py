@@ -1,6 +1,7 @@
 # Final Project for CS410P
 # By: Ebraheem AlAthari and Medina Lamkin
 # Date: 05/21/2019
+
 import sys
 import numpy
 import scipy.io.wavfile as wavfile
@@ -27,8 +28,17 @@ class Effects:
         name = filename.split('.')
         self.name = name[0]
         # used for echo functions
+        # TODO try to move this to the echo function
         self.echos_left = []
         self.echos_right = []
+        # dictionary to map each effects function to the number they
+        # correspond to in the interface
+        self.map_effects = { '1' : self.apply_all,
+                             '2' : self.echo,
+                             '3' : self.reverb,
+                             '4' : self.normalization
+                            }
+
 
     # check that the given file is stereo; exit if not
     def check_stereo(self, samples):
@@ -105,6 +115,10 @@ class Effects:
             pass
         pass
 
+    def apply_all(self):
+        self.echo()
+        self.reverb()
+        self.normalization()
 
     # Possible Functions
     def compression(self):
