@@ -32,12 +32,12 @@ class Effects:
         self.echos_left = []
         self.echos_right = []
         # dictionary to map each effects function to the number they
-        # correspond to in the interface
-        self.map_effects = { '1' : self.apply_all,
-                             '2' : self.echo,
-                             '3' : self.reverb,
-                             '4' : self.normalization
-                            }
+        # correspond to in the interface; keep normalization last
+        self.map_to_effects = { '1' : self.apply_all,
+                                '2' : self.echo,
+                                '3' : self.reverb,
+                                '4' : self.normalization
+                               }
 
 
     # check that the given file is stereo; exit if not
@@ -60,6 +60,7 @@ class Effects:
         pass
 
     def normalization(self):
+        print("normalization")
         self.left = self.normalize_channel(self.left)
         self.right = self.normalize_channel(self.right)
 

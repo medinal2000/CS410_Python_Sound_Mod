@@ -25,7 +25,6 @@ class CmdInterface():
                               self.reverb : False,
                               self.normalize : False
                               }
-        print(self.users_choices)
         pass
 
     # get filename and run the program
@@ -109,8 +108,7 @@ class CmdInterface():
         # apply the effects
         for option in self.users_choices.items():
             if option[1] == True:
-                effects.map_effects[option[0]]
-                print(option, "effect will apply")
+                effects.map_to_effects[option[0]]()
         # save the altered version of the wav file
         effects.export()
         return False
