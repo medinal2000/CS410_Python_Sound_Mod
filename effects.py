@@ -6,6 +6,8 @@ import sys
 import numpy
 import scipy.io.wavfile as wavfile
 import time
+import random
+import os
 
 
 class Effects:
@@ -49,16 +51,27 @@ class Effects:
     # Exports a wav file based on the altered left and right channels
     # Example $(filename)-Output-$(date and time)
     # Appends current date and time to new file
+
+    # If export is called at the same time,
+    # it appends a random letter after Output
     def export(self):
         localtime = time.asctime( time.localtime(time.time()) )
         localtime = localtime.replace(' ','-')
         localtime = localtime.replace(':','-')
         self.output_file = './' + self.name + '-Output-' + localtime + '.wav'
         samples =  numpy.column_stack((self.left,self.right))
-        wavfile.write(self.output_file,self.sample_rate,samples)
-        print('Saved File - New Filename: ' + self.output_file)
+        exists = os.path.isfile(self.output_file)
+        if not exists:
+            wavfile.write(self.output_file,self.sample_rate,samples)
+            print('Saved File - New Filename: ' + self.output_file)
+        else:
+            random_int = random.choice([random.randint(65,90),random.randint(97,122)])
+            self.output_file = './' + self.name + '-Output-' + chr(random_int) + '-' + localtime + '.wav'
+            wavfile.write(self.output_file,self.sample_rate,samples)
+            print('Saved File - New Filename: ' + self.output_file)
         pass
 
+    # Normalizes the audio track
     def normalization(self):
         self.left = self.normalize_channel(self.left)
         self.right = self.normalize_channel(self.right)
@@ -86,18 +99,22 @@ class Effects:
         channel = channel_delay
         return channel
 
+    # Begins the process of adding echo to the sound track
     def echo(self, num_of_echos=4, duration_of_echo=1):
         self.num_of_echos = num_of_echos
         self.duration_of_echo = duration_of_echo
+        self.duration_of_echo = self.duration_of_echo * 1000
         self.valid_echo()
         self.echo_function()
         pass
 
+    # Adds Echo to the sound track
     def echo_function(self):
-        duration = self.duration_of_echo * 1000
+        self.echos_left = []
+        self.echos_right = []
         for i in range(0,self.num_of_echos):
-            self.echos_left.insert(i,self.audio_delay_channel(self.original_left,duration*(i+1)))
-            self.echos_right.insert(i,self.audio_delay_channel(self.original_right,duration*(i+1)))
+            self.echos_left.insert(i,self.audio_delay_channel(self.original_left,self.duration_of_echo*(i+1)))
+            self.echos_right.insert(i,self.audio_delay_channel(self.original_right,self.duration_of_echo*(i+1)))
             pass
 
         for i in range(0,self.num_of_echos):
@@ -108,6 +125,7 @@ class Effects:
             pass
         pass
 
+    # Validates Echo Inputs
     def valid_echo(self):
         if self.num_of_echos < 1:
             print('Number of Echos was recvived as a negative number')
@@ -127,27 +145,34 @@ class Effects:
             pass
         pass
 
+    # The Speed functions adjusts the speed the wav file plays out
     def speed(self,duration=0.5):
-        # < 1 slow music
-        # > 1 fast music
         self.sample_rate = int(self.sample_rate * duration)
+        pass
+
+    # Reverb uses the echo function to generated short echos
+    def reverb(self,num_of_reverb=7):
+        self.num_of_echos = num_of_reverb
+        self.duration_of_echo = 100
+        self.valid_reverb()
+        self.echo_function()
+        pass
+
+    def valid_reverb(self):
+        if self.num_of_echos < 1:
+            print('Number of Echos was recvived as a negative number')
+            print('Setting Number of Echos to 7 in Reverb')
+            self.num_of_echos = 7
+            pass
+        elif self.num_of_echos > self.MAX_ECHO:
+            print('Number of Echos was recvived as a number higher then 7')
+            print('Setting Number of Echos to 7 in Reverb')
+            self.num_of_echos = self.MAX_ECHO
+            pass
         pass
 
     def apply_all(self):
         self.echo()
         self.reverb()
+        self.speed()
         self.normalization()
-
-    # Possible Functions
-    def compression(self):
-        pass
-
-    def tremolo(self):
-        pass
-
-    def vibration(self):
-        pass
-
-    # Functions to work on
-    def reverb(self):
-        pass
