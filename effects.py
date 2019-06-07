@@ -127,6 +127,12 @@ class Effects:
             pass
         pass
 
+    def speed(self,duration=0.5):
+        # < 1 slow music
+        # > 1 fast music
+        self.sample_rate = int(self.sample_rate * duration)
+        pass
+
     def apply_all(self):
         self.echo()
         self.reverb()

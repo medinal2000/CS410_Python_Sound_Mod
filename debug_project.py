@@ -5,8 +5,8 @@
 from interface import CmdInterface
 from effects import Effects
 def main():
-    effect = Effects('Hi.wav')
-    effect.echo()
+    effect = Effects('Hello.wav')
+    effect.speed()
     effect.normalization()
     effect.export()
     pass
