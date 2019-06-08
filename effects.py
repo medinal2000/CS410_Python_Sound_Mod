@@ -38,7 +38,8 @@ class Effects:
         self.map_to_effects = { '1' : self.apply_all,
                                 '2' : self.echo,
                                 '3' : self.reverb,
-                                '4' : self.normalization
+                                '4' : self.speed,
+                                '5' : self.normalization
                                }
 
 

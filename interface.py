@@ -9,12 +9,14 @@ class CmdInterface():
     def __init__(self):
         # option values; allows for less hard coding of values
         self.all, self.echo = '1', '2'
-        self.reverb, self.normalize = '3', '4'
-        self.quit = '5'
+        self.reverb, self.speed = '3', '4'
+        self.normalize = '5'
+        self.quit = '6'
         # dictionary to map each option to its desciption
         self.options = {self.all : 'Apply all effects',
                         self.echo : 'Echo',
                         self.reverb : 'Reverb',
+                        self.speed : 'Reduce speed of audio file',
                         self.normalize : 'Normalization',
                         self.quit : 'Don\'t apply any effects (program will exit)'
                         }
@@ -23,6 +25,7 @@ class CmdInterface():
         self.users_choices = {self.all : False,
                               self.echo : False,
                               self.reverb : False,
+                              self.speed : False,
                               self.normalize : False
                               }
         pass
@@ -87,7 +90,7 @@ class CmdInterface():
     def validate_input(self, requested_effects):
         for effect in requested_effects:
             if(effect == self.all or effect == self.echo or effect == self.reverb
-                or effect == self.normalize or effect == self.quit):
+                or effect == self.speed or effect == self.normalize or effect == self.quit):
                 return True
             else:
                 return False
