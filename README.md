@@ -1,4 +1,5 @@
 # CS410 Final Project Python Sound Mod
+## Copyright (c) 2019 Medina Lamkin, Ebraheem AlAthari
 
 ## Write Up
 
